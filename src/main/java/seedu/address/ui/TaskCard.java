@@ -26,7 +26,11 @@ public class TaskCard extends UiPart<Region> {
     @FXML
     private Label description;
     @FXML
+    private Label deadline;
+    @FXML
     private Label taskStatus;
+    @FXML
+    private Label priority;
     @FXML
     private Label assignees;
 
@@ -39,8 +43,11 @@ public class TaskCard extends UiPart<Region> {
         id.setText(displayedIndex + ". ");
         title.setText(task.getTitle().taskTitle);
         description.setText("Description: " + task.getDescription().desc);
+        deadline.setText("Deadline: " + task.getDeadline().dateString);
         taskStatus.setText("Status: " + task.getTaskStatus().getStatus());
         assignees.setText("Assignees: " + Assignment.getAssignees(task.getTitle()));
+        priority.setText("Priorty: " + task.getPriority().getPriority());
+        assignees.setText("Assignees: " + Assignment.getAssignees(task.getTitle()));;
     }
 
     @Override

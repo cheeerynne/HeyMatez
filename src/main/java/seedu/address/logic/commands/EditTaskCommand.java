@@ -1,7 +1,9 @@
 package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_DEADLINE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_PRIORITY;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_STATUS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TITLE;
 import static seedu.address.model.Model.PREDICATE_SHOW_ALL_TASKS;
@@ -14,12 +16,12 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.CollectionUtil;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
+import seedu.address.model.task.Deadline;
 import seedu.address.model.task.Description;
+import seedu.address.model.task.Priority;
 import seedu.address.model.task.Task;
 import seedu.address.model.task.TaskStatus;
 import seedu.address.model.task.Title;
-
-
 
 /**
  * Edits the details of an existing task in HEY MATEz.
@@ -33,7 +35,9 @@ public class EditTaskCommand extends Command {
             + "Parameters: INDEX (must be a positive integer) "
             + "[" + PREFIX_TITLE + " TITLE] "
             + "[" + PREFIX_DESCRIPTION + " DESCRIPTION] "
+            + "[" + PREFIX_DEADLINE + " DEADLINE] "
             + "[" + PREFIX_STATUS + " STATUS] "
+            + "[" + PREFIX_PRIORITY + " PRIORITY] "
             + "Example: " + COMMAND_WORD + " 1 "
             + PREFIX_TITLE + " Plan open house meeting "
             + PREFIX_STATUS + " completed";
@@ -82,9 +86,11 @@ public class EditTaskCommand extends Command {
 
         Title updatedTitle = editTaskDescriptor.getTitle().orElse(taskToEdit.getTitle());
         Description updatedDescription = editTaskDescriptor.getDescription().orElse(taskToEdit.getDescription());
+        Deadline updatedDeadline = editTaskDescriptor.getDeadline().orElse(taskToEdit.getDeadline());
         TaskStatus updatedStatus = editTaskDescriptor.getStatus().orElse(taskToEdit.getTaskStatus());
+        Priority updatedPriority = editTaskDescriptor.getPriority().orElse(taskToEdit.getPriority());
 
-        return new Task(updatedTitle, updatedDescription, updatedStatus);
+        return new Task(updatedTitle, updatedDescription, updatedDeadline, updatedStatus, updatedPriority);
     }
 
     @Override
@@ -115,6 +121,8 @@ public class EditTaskCommand extends Command {
         private Title title;
         private Description description;
         private TaskStatus status;
+        private Deadline deadline;
+        private Priority priority;
 
         public EditTaskDescriptor() {}
 
@@ -125,6 +133,8 @@ public class EditTaskCommand extends Command {
             setTitle(toCopy.title);
             setDescription(toCopy.description);
             setStatus(toCopy.status);
+            setDeadline(toCopy.deadline);
+            setPriority(toCopy.priority);
         }
 
         /**
@@ -158,6 +168,22 @@ public class EditTaskCommand extends Command {
             return Optional.ofNullable(status);
         }
 
+        public void setDeadline(Deadline date) {
+            this.deadline = date;
+        }
+
+        public Optional<Deadline> getDeadline() {
+            return Optional.ofNullable(deadline);
+        }
+
+        public void setPriority(Priority priority) {
+            this.priority = priority;
+        }
+
+        public Optional<Priority> getPriority() {
+            return Optional.ofNullable(priority);
+        }
+
 
         @Override
         public boolean equals(Object other) {
@@ -176,7 +202,8 @@ public class EditTaskCommand extends Command {
 
             return getTitle().equals(e.getTitle())
                     && getDescription().equals(e.getDescription())
-                    && getStatus().equals(getStatus());
+                    && getStatus().equals(getStatus())
+                    && getDeadline().equals(e.getDeadline());
         }
     }
 }
