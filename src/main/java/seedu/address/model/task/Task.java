@@ -1,5 +1,7 @@
 package seedu.address.model.task;
 
+import seedu.address.model.assignment.Assignment;
+
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.util.Objects;
@@ -16,7 +18,6 @@ public class Task {
     // Data fields
     private final Description description;
     private final TaskStatus taskStatus;
-
 
     /**
      * Overloaded constructor which sets taskStatus to uncompleted by default
@@ -49,8 +50,6 @@ public class Task {
     public TaskStatus getTaskStatus() {
         return taskStatus;
     }
-
-
 
     /**
      * Returns true if both tasks have the same title.
@@ -97,7 +96,9 @@ public class Task {
                 .append("; Description: ")
                 .append(getDescription())
                 .append("; Task Status: ")
-                .append(getTaskStatus());
+                .append(getTaskStatus())
+                .append("; Assignees: ")
+                .append(Assignment.getAssignees(title));
 
         return builder.toString();
     }

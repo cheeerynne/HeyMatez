@@ -20,8 +20,10 @@ import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
 import seedu.address.model.ReadOnlyAddressBook;
 import seedu.address.model.ReadOnlyUserPrefs;
+import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.task.Task;
+import seedu.address.model.task.Title;
 import seedu.address.testutil.PersonBuilder;
 
 public class AddMemberCommandTest {
@@ -178,6 +180,11 @@ public class AddMemberCommandTest {
 
         @Override
         public void updateFilteredTaskList(Predicate<Task> predicate) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void assignTask(Title taskTitle, Name memberName) {
             throw new AssertionError("This method should not be called.");
         }
     }
