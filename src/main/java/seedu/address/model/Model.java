@@ -10,6 +10,7 @@ import seedu.address.model.person.Person;
 import seedu.address.model.task.Task;
 import seedu.address.model.assignment.Assignment;
 import seedu.address.model.task.Title;
+import seedu.address.model.task.TaskStatus;
 
 /**
  * The API of the Model component.
@@ -19,6 +20,7 @@ public interface Model {
     Predicate<Task> PREDICATE_SHOW_ALL_TASKS = unused -> true;
     Predicate<Person> PREDICATE_SHOW_ALL_PERSONS = unused -> true;
     Predicate<Assignment> PREDICATE_SHOW_ALL_ASSIGNMENTS = unused -> true;
+    Predicate<Task> PREDICATE_SHOW_ALL_UNCOMPLETED_TASKS = task -> task.getTaskStatus().equals(TaskStatus.UNCOMPLETED);
 
     /**
      * Replaces user prefs data with the data in {@code userPrefs}.
