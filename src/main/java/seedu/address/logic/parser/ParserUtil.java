@@ -14,11 +14,7 @@ import seedu.address.model.person.Name;
 import seedu.address.model.person.Phone;
 import seedu.address.model.person.Role;
 import seedu.address.model.tag.Tag;
-import seedu.address.model.task.Deadline;
-import seedu.address.model.task.Description;
-import seedu.address.model.task.Priority;
-import seedu.address.model.task.TaskStatus;
-import seedu.address.model.task.Title;
+import seedu.address.model.task.*;
 
 /**
  * Contains utility methods used for parsing strings in the various *Parser classes.
@@ -207,5 +203,17 @@ public class ParserUtil {
             throw new ParseException(Priority.MESSAGE_CONSTRAINTS);
         }
         return Priority.valueOf(priority.toUpperCase());
+    }
+
+    /**
+     * Parses a {@code String assignees} into an {@code Assignees}.
+     * Leading and trailing whitespaces will be trimmed.
+     *
+     * @throws ParseException if the given {@code assignees} is invalid.
+     */
+    public static Assignees parseAssignees(String assignees) {
+        String[] splitAssignees = assignees.split(", ");
+
+        if (!Assignees.isValidAssigneeList(assignees, ))
     }
 }

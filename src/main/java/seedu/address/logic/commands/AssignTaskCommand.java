@@ -27,7 +27,7 @@ public class AssignTaskCommand extends Command {
             + "[" + PREFIX_MEMBER_NAME + " MEMBER_NAME " + "] "
             + "Example: " + COMMAND_WORD + " "
             + " Script Writing "
-            + PREFIX_MEMBER_NAME + " Rachel Lim";
+            + PREFIX_MEMBER_NAME + " Tammy Lim";
 
     public static final String MESSAGE_ASSIGN_TASK_SUCCESS = "Task Assigned: %1$s";
     public static final String MESSAGE_MEMBER_ALREADY_ASSIGNED = "Member specified is already assigned to the task! ";

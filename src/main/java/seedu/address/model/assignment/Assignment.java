@@ -30,6 +30,10 @@ public class Assignment {
         }
     }
 
+    public static List<Name> getAssigneesList(Title taskTitle) {
+        return assignments.get(taskTitle);
+    }
+
     public static String getAssignees(Title taskTitle) {
         List<Name> assigneeList = assignments.get(taskTitle);
         StringBuilder stringBuilder = new StringBuilder();
