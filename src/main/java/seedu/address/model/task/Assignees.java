@@ -96,11 +96,10 @@ public class Assignees {
 //        return false;
 //    }
 
-    @Override
-    public String toString() {
+    public String getAssignees() {
         StringBuilder stringBuilder = new StringBuilder();
 
-        if (assigneesList == null) {
+        if (assigneesList.size() == 0) {
             return "none";
         }
 
