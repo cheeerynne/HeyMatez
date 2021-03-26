@@ -232,15 +232,21 @@ public class ParserUtil {
         return Priority.valueOf(priority.toUpperCase());
     }
 
-    /**
-     * Parses a {@code String assignees} into an {@code Assignees}.
-     * Leading and trailing whitespaces will be trimmed.
-     *
-     * @throws ParseException if the given {@code assignees} is invalid.
-     */
-    public static Assignees parseAssignees(String assignees) {
-        String[] splitAssignees = assignees.split(", ");
-
-        if (!Assignees.isValidAssigneeList(assignees, ))
-    }
+//    /**
+//     * Parses a {@code String assignees} into an {@code Assignees}.
+//     * Leading and trailing whitespaces will be trimmed.
+//     *
+//     * @throws ParseException if the given {@code assignees} is invalid.
+//     */
+//    public static Assignees parseAssignee(String assignee) {
+//        if (assignee.equals("")) {
+//            return new Assignees();
+//        }
+//
+//        String trimmedAssignee = assignee.trim();
+//
+//        try {
+//            assert Assignees.is
+//        }
+//    }
 }

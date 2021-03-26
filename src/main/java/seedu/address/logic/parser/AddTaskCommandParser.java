@@ -1,21 +1,13 @@
 package seedu.address.logic.parser;
 
 import static seedu.address.commons.core.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_DEADLINE;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_PRIORITY;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_STATUS;
+import static seedu.address.logic.parser.CliSyntax.*;
 
 import java.util.stream.Stream;
 
 import seedu.address.logic.commands.AddTaskCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.model.task.Deadline;
-import seedu.address.model.task.Description;
-import seedu.address.model.task.Priority;
-import seedu.address.model.task.Task;
-import seedu.address.model.task.TaskStatus;
-import seedu.address.model.task.Title;
+import seedu.address.model.task.*;
 
 
 public class AddTaskCommandParser implements Parser<AddTaskCommand> {
@@ -57,7 +49,9 @@ public class AddTaskCommandParser implements Parser<AddTaskCommand> {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, Deadline.MESSAGE_CONSTRAINTS), pe);
         }
 
-        Task task = new Task(title, description, deadline);
+        Assignees assignees = new Assignees();
+
+        Task task = new Task(title, description, deadline, assignees);
 
         TaskStatus status = null;
 
@@ -69,7 +63,7 @@ public class AddTaskCommandParser implements Parser<AddTaskCommand> {
                         pe);
             }
 
-            task = new Task(title, description, deadline, status);
+            task = new Task(title, description, deadline, status, assignees);
         }
 
         Priority priority;
@@ -83,12 +77,11 @@ public class AddTaskCommandParser implements Parser<AddTaskCommand> {
             }
 
             task = status != null
-                    ? new Task(title, description, deadline, status, priority)
-                    : new Task(title, description, deadline, priority);
+                    ? new Task(title, description, deadline, status, priority, assignees)
+                    : new Task(title, description, deadline, priority, assignees);
         }
         return new AddTaskCommand(task);
     }
-
 
     /**
      * Returns true if none of the prefixes contains empty {@code Optional} values in the given

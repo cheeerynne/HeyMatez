@@ -1,9 +1,9 @@
 package seedu.address.logic.parser;
 
+import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.AssignTaskCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.Name;
-import seedu.address.model.task.Title;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.core.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
@@ -20,11 +20,11 @@ public class AssignTaskCommandParser implements Parser<AssignTaskCommand> {
         ArgumentMultimap argMultimap =
                 ArgumentTokenizer.tokenize(args, PREFIX_MEMBER_NAME);
 
-        Title taskTitle;
+        Index index;
         Name memberName = null;
 
         try {
-            taskTitle = ParserUtil.parseTitle(argMultimap.getPreamble());
+            index = ParserUtil.parseIndex(argMultimap.getPreamble());
         } catch (ParseException pe) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT,
                     AssignTaskCommand.MESSAGE_USAGE), pe);
@@ -34,6 +34,6 @@ public class AssignTaskCommandParser implements Parser<AssignTaskCommand> {
             memberName = ParserUtil.parseName(argMultimap.getValue(PREFIX_MEMBER_NAME).get());
         }
 
-        return new AssignTaskCommand(taskTitle, memberName);
+        return new AssignTaskCommand(index, memberName);
     }
 }

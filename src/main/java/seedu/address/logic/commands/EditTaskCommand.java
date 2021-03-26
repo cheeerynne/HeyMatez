@@ -16,12 +16,7 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.CollectionUtil;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
-import seedu.address.model.task.Deadline;
-import seedu.address.model.task.Description;
-import seedu.address.model.task.Priority;
-import seedu.address.model.task.Task;
-import seedu.address.model.task.TaskStatus;
-import seedu.address.model.task.Title;
+import seedu.address.model.task.*;
 
 /**
  * Edits the details of an existing task in HEY MATEz.
@@ -89,8 +84,9 @@ public class EditTaskCommand extends Command {
         Deadline updatedDeadline = editTaskDescriptor.getDeadline().orElse(taskToEdit.getDeadline());
         TaskStatus updatedStatus = editTaskDescriptor.getStatus().orElse(taskToEdit.getTaskStatus());
         Priority updatedPriority = editTaskDescriptor.getPriority().orElse(taskToEdit.getPriority());
+        Assignees updatedAssignees = taskToEdit.getAssignees();
 
-        return new Task(updatedTitle, updatedDescription, updatedDeadline, updatedStatus, updatedPriority);
+        return new Task(updatedTitle, updatedDescription, updatedDeadline, updatedStatus, updatedPriority, updatedAssignees);
     }
 
     @Override
@@ -114,8 +110,8 @@ public class EditTaskCommand extends Command {
     }
 
     /**
-     * Stores the details to edit the person with. Each non-empty field value will replace the
-     * corresponding field value of the person.
+     * Stores the details to edit the task with. Each non-empty field value will replace the
+     * corresponding field value of the task.
      */
     public static class EditTaskDescriptor {
         private Title title;

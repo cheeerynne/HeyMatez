@@ -1,26 +1,26 @@
 package seedu.address.model.task;
 
-import seedu.address.model.Model;
+import seedu.address.logic.parser.ParserUtil;
+import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.Name;
-import seedu.address.model.person.Person;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Objects.requireNonNull;
-import static seedu.address.commons.util.AppUtil.checkArgument;
 
 public class Assignees {
     public static final String MESSAGE_CONSTRAINTS =
             "Assignees should only contain names of members in the displayed member list.";
 
-    public static List<Name> assigneesList;
+    public List<Name> assigneesList;
 
     //C1: empty list
     //C2: constructor(List<Name> toAdd)
     // add method
+
     // remove method (change assignee)
     // personAlreadyExist(Name name)
+
     // isValidAssigneeList
 
     // Command Parser
@@ -37,67 +37,20 @@ public class Assignees {
     /**
      * Constructs a list of {@code Assignees}.
      *
-     * @param assigneesList A list of assignees' name to be added to the assignee's list.
+     * @param listOfAssignees A list of assignees' name to be added to the assignee's list.
      */
-    public Assignees(List<Name> assigneesList, Model model) {
-        checkArgument(isValidAssigneeList(assigneesList, model), MESSAGE_CONSTRAINTS);
-        this.assigneesList = assigneesList;
-    }
+    public Assignees(String listOfAssignees) throws ParseException {
+        this.assigneesList = new ArrayList<>();
+        String[] assigneesArray = listOfAssignees.split(", ");
 
-    public addAssignees(String assigneesList) {
-
-    }
-
-    public static boolean isValidAssigneeList(String assigneesList, Model model) {
-        List<Person> lastShownMemberList = model.getFilteredPersonList();
-
-        for (Name assigneeName : assigneesList) {
-            for (Person person : lastShownMemberList) {
-                Name currentName = person.getName();
-
-                if (assigneeName.equals(currentName)) {
-                    return true;
-                }
-            }
+        for (String strName : assigneesArray) {
+            Name name = ParserUtil.parseName(strName);
+            this.assigneesList.add(name);
         }
-
-        return false;
     }
 
-//    public static boolean isValidAssigneeList(List<Name> assigneesList, Model model) {
-//        List<Person> lastShownMemberList = model.getFilteredPersonList();
-//
-//        for (Name assigneeName : assigneesList) {
-//            for (Person person : lastShownMemberList) {
-//                Name currentName = person.getName();
-//
-//                if (assigneeName.equals(currentName)) {
-//                    return true;
-//                }
-//            }
-//        }
-//
-//        return false;
-//    }
-
-//    public static boolean isValidAssignee(Model model) {
-//        List<Person> lastShownMemberList = model.getFilteredPersonList();
-//
-//        for (Name assigneeName : assigneesList) {
-//            for (Person person : lastShownMemberList) {
-//                Name currentName = person.getName();
-//
-//                if (assigneeName.equals(currentName)) {
-//                    return true;
-//                }
-//            }
-//        }
-//
-//        return false;
-//    }
-
-    public String getAssignees() {
-        StringBuilder stringBuilder = new StringBuilder();
+    public String getAssigneesString() {
+        StringBuilder stringBuilder = new StringBuilder("");
 
         if (assigneesList.size() == 0) {
             return "none";
@@ -113,4 +66,29 @@ public class Assignees {
 
         return stringBuilder.toString();
     }
+
+//    public List<Name> getAssigneesList() {
+//        return assigneesList;
+//    }
+
+    @Override
+    public String toString() {
+        return this.getAssigneesString();
+    }
+
+//    public static boolean isValidAssignee(String assigneesList, Model model) {
+//        List<Person> lastShownMemberList = model.getFilteredPersonList();
+//
+//        for (Name assigneeName : assigneesList) {
+//            for (Person person : lastShownMemberList) {
+//                Name currentName = person.getName();
+//
+//                if (assigneeName.equals(currentName)) {
+//                    return true;
+//                }
+//            }
+//        }
+//
+//        return false;
+//    }
 }

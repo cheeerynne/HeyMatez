@@ -1,11 +1,6 @@
 package seedu.address.testutil;
 
-import seedu.address.model.task.Deadline;
-import seedu.address.model.task.Description;
-import seedu.address.model.task.Priority;
-import seedu.address.model.task.Task;
-import seedu.address.model.task.TaskStatus;
-import seedu.address.model.task.Title;
+import seedu.address.model.task.*;
 
 public class TaskBuilder {
     public static final String DEFAULT_TITLE = "Book venue";
@@ -24,7 +19,7 @@ public class TaskBuilder {
     private Deadline deadline;
     private TaskStatus status;
     private Priority priority;
-
+    private Assignees assignees;
 
     /**
      * Creates a {@code TaskBuilder} with the default details.
@@ -35,6 +30,7 @@ public class TaskBuilder {
         deadline = new Deadline(DEFAULT_DEADLINE);
         status = TaskStatus.valueOf(DEFAULT_STATUS);
         priority = Priority.valueOf(DEFAULT_PRIORITY);
+        assignees = new Assignees();
     }
 
     /**
@@ -46,6 +42,7 @@ public class TaskBuilder {
         deadline = taskToCopy.getDeadline();
         status = taskToCopy.getTaskStatus();
         priority = taskToCopy.getPriority();
+        assignees = taskToCopy.getAssignees();
     }
 
     /**
@@ -82,7 +79,7 @@ public class TaskBuilder {
     }
 
     /**
-     * Sets the {@code Deadline} of the {@code Task} that we are building.
+     * Sets the {@code Priority} of the {@code Task} that we are building.
      */
     public TaskBuilder withPriority(String priority) {
         this.priority = Priority.valueOf(priority.toUpperCase());
@@ -90,7 +87,7 @@ public class TaskBuilder {
     }
 
     public Task build() {
-        return new Task(title, description, deadline, status, priority);
+        return new Task(title, description, deadline, status, priority, assignees);
     }
 
 }

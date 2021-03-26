@@ -7,12 +7,7 @@ import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
 import seedu.address.model.person.Role;
-import seedu.address.model.task.Deadline;
-import seedu.address.model.task.Description;
-import seedu.address.model.task.Priority;
-import seedu.address.model.task.Task;
-import seedu.address.model.task.TaskStatus;
-import seedu.address.model.task.Title;
+import seedu.address.model.task.*;
 
 /**
  * Contains utility methods for populating {@code AddressBook} with sample data.
@@ -38,16 +33,20 @@ public class SampleDataUtil {
     public static Task[] getSampleTasks() {
         return new Task[] {
             new Task(new Title("Meeting with EXCO"), new Description("Meeting to discuss about club budget"),
-                    new Deadline("2021-04-01"), TaskStatus.valueOf("UNCOMPLETED"), Priority.valueOf("HIGH")),
+                    new Deadline("2021-04-01"), TaskStatus.valueOf("UNCOMPLETED"), Priority.valueOf("HIGH"),
+                    new Assignees()),
             new Task(new Title("Meeting with MINDS stakeholders"),
                     new Description("Meeting with stakeholders to discuss about planning of charity event"),
-                    new Deadline("2021-02-23"), TaskStatus.valueOf("COMPLETED"), Priority.valueOf("MEDIUM")),
+                    new Deadline("2021-02-23"), TaskStatus.valueOf("COMPLETED"), Priority.valueOf("MEDIUM"),
+                    new Assignees()),
             new Task(new Title("Cohesion Planning"),
                     new Description("Plan for Club cohesion. Decide on logistic and games"),
-                    new Deadline("2021-08-30"), TaskStatus.valueOf("UNCOMPLETED"), Priority.valueOf("LOW")),
+                    new Deadline("2021-08-30"), TaskStatus.valueOf("UNCOMPLETED"), Priority.valueOf("LOW"),
+                    new Assignees()),
             new Task(new Title("Buy materials for upcoming Cohesion"),
-                    new Description("Buy N95 masks, alcohol wips for participants to use"),
-                    new Deadline("2021-05-15"), TaskStatus.valueOf("UNCOMPLETED"), Priority.valueOf("UNASSIGNED")),
+                    new Description("Buy N95 masks, alcohol wipes for participants to use"),
+                    new Deadline("2021-05-15"), TaskStatus.valueOf("UNCOMPLETED"), Priority.valueOf("UNASSIGNED"),
+                    new Assignees()),
         };
     }
 

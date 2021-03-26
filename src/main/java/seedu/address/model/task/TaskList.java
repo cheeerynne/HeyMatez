@@ -24,7 +24,6 @@ public class TaskList implements Iterable<Task> {
         return internalList.stream().anyMatch(toCheck::isSameTask);
     }
 
-
     /**
      * Adds a task to the list.
      * Task may be a duplicate

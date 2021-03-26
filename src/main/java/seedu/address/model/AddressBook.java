@@ -6,13 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import javafx.collections.ObservableList;
-import seedu.address.model.assignment.Assignment;
+import seedu.address.logic.parser.ParserUtil;
+import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.UniquePersonList;
 import seedu.address.model.task.Task;
 import seedu.address.model.task.TaskList;
-import seedu.address.model.task.Title;
 
 /**
  * Wraps all data at the address-book level
@@ -22,7 +22,6 @@ public class AddressBook implements ReadOnlyAddressBook {
 
     private final UniquePersonList persons;
     private final TaskList tasks;
-    private static Assignment assignments;
 
     /*
      * The 'unusual' code block below is a non-static initialization block, sometimes used to avoid duplication
@@ -36,9 +35,7 @@ public class AddressBook implements ReadOnlyAddressBook {
         tasks = new TaskList();
     }
 
-    public AddressBook() {
-        assignments = new Assignment(new HashMap<Title, List<Name>>());
-    }
+    public AddressBook() { }
 
     /**
      * Creates an AddressBook using the Persons in the {@code toBeCopied}
@@ -76,6 +73,18 @@ public class AddressBook implements ReadOnlyAddressBook {
     public boolean hasPerson(Person person) {
         requireNonNull(person);
         return persons.contains(person);
+    }
+
+    public boolean hasName(String nameInput) throws ParseException {
+//        Name name = ParserUtil.parseName(nameInput);
+
+        for (Person person : persons) {
+            if (person.getName().fullName.equals(nameInput)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -145,17 +154,6 @@ public class AddressBook implements ReadOnlyAddressBook {
      */
     public void removeTask(Task key) {
         tasks.remove(key);
-    }
-
-    /**
-     * Assign an {@code assignedMember} to {@code taskTitle}.
-     * {@code target} must exist in the task list.
-     */
-    public void assignTask(Title taskTitle, Name assignedMember) {
-        requireNonNull(taskTitle);
-        requireNonNull(assignedMember);
-
-        assignments.assignTask(taskTitle, assignedMember);
     }
 
     @Override

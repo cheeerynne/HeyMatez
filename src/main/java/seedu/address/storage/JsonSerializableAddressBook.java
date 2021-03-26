@@ -12,6 +12,7 @@ import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.AddressBook;
 import seedu.address.model.ReadOnlyAddressBook;
 import seedu.address.model.person.Person;
+import seedu.address.model.task.Assignees;
 import seedu.address.model.task.Task;
 
 /**
@@ -52,6 +53,7 @@ class JsonSerializableAddressBook {
      */
     public AddressBook toModelType() throws IllegalValueException {
         AddressBook addressBook = new AddressBook();
+
         for (JsonAdaptedPerson jsonAdaptedPerson : persons) {
             Person person = jsonAdaptedPerson.toModelType();
             if (addressBook.hasPerson(person)) {
@@ -59,12 +61,65 @@ class JsonSerializableAddressBook {
             }
             addressBook.addPerson(person);
         }
+
         for (JsonAdaptedTask jsonAdaptedTask : tasks) {
             Task task = jsonAdaptedTask.toModelType();
-            addressBook.addTask(task);
+            Assignees listOfAssignees = task.getAssignees();
+            String[] assigneesArray = listOfAssignees.getAssigneesString().split(", ");
+
+            boolean checker = true;
+
+            for (String name : assigneesArray) {
+                if (!addressBook.hasName(name)) {
+                    checker = false;
+                }
+            }
+
+            if (!checker) {
+                throw new IllegalValueException(Assignees.MESSAGE_CONSTRAINTS);
+            } else {
+                addressBook.addTask(task);
+            }
         }
 
         return addressBook;
     }
 
+//    public AddressBook toModelType() throws IllegalValueException {
+
+//        // addressBook has a hasName to check if name exists
+//
+//        for (JsonAdaptedTask jsonAdaptedTask : tasks) {
+//            Task task = jsonAdaptedTask.toModelType();
+////            String arrayOfAssignes= task.getAssignees(); /// Dylan, Erynne
+//
+////            String[] brokenNames = arrayOfAssignes.split(", ");
+//
+////            if (addressBook.hasNames(brokenNames)) {
+////                addressBook.addTask(task);
+////            }
+//
+//        }
+//
+//        return addressBook;
+//    }
+
+//    public AddressBook toModelType() throws IllegalValueException {
+//        AddressBook addressBook = new AddressBook();
+//
+//        for (JsonAdaptedPerson jsonAdaptedPerson : persons) {
+//            Person person = jsonAdaptedPerson.toModelType();
+//            if (addressBook.hasPerson(person)) {
+//                throw new IllegalValueException(MESSAGE_DUPLICATE_PERSON);
+//            }
+//            addressBook.addPerson(person);
+//        }
+//
+//        for (JsonAdaptedTask jsonAdaptedTask : tasks) {
+//            Task task = jsonAdaptedTask.toModelType();
+//            addressBook.addTask(task);
+//        }
+//
+//        return addressBook;
+//    }
 }

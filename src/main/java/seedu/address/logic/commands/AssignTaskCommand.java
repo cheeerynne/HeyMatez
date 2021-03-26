@@ -7,43 +7,42 @@ import static seedu.address.model.Model.PREDICATE_SHOW_ALL_TASKS;
 import java.util.List;
 
 import seedu.address.commons.core.Messages;
+import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
-import seedu.address.model.task.Task;
-import seedu.address.model.task.Title;
+import seedu.address.model.task.*;
 
 /**
  * Assigns a task to members.
  */
 public class AssignTaskCommand extends Command {
-
     public static final String COMMAND_WORD = "assignTask";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Assigns an existing task to the member specified "
-            + "by the task title shown in the task board.\n"
-            + "Parameters: TASK_TITLE "
+            + "by the task index number shown in the displayed task board.\n"
+            + "Parameters: INDEX (must be a positive integer) "
             + "[" + PREFIX_MEMBER_NAME + " MEMBER_NAME " + "] "
             + "Example: " + COMMAND_WORD + " "
-            + " Script Writing "
-            + PREFIX_MEMBER_NAME + " Tammy Lim";
+            + " 1 "
+            + PREFIX_MEMBER_NAME + " Michelle Lee";
 
     public static final String MESSAGE_ASSIGN_TASK_SUCCESS = "Task Assigned: %1$s";
     public static final String MESSAGE_MEMBER_ALREADY_ASSIGNED = "Member specified is already assigned to the task! ";
 
-    private final Title taskTitle;
+    private final Index index;
     private final Name name;
 
     /**
-     * @param taskTitle of the task in the filtered task list to assign to member
+     * @param index of the task in the filtered task list to assign to member
      * @param name of the member to assign the task to
      */
-    public AssignTaskCommand(Title taskTitle, Name name) {
-        requireNonNull(taskTitle);
+    public AssignTaskCommand(Index index, Name name) {
+        requireNonNull(index);
         requireNonNull(name);
 
-        this.taskTitle = taskTitle;
+        this.index = index;
         this.name = name;
     }
 
@@ -52,20 +51,13 @@ public class AssignTaskCommand extends Command {
         requireNonNull(model);
         List<Task> lastShownTaskList = model.getFilteredTaskList();
         List<Person> lastShownMemberList = model.getFilteredPersonList();
-        Task taskToAssign = null;
         Name memberName = null;
 
-        for (Task task : lastShownTaskList) {
-            Title currentTaskTitle = task.getTitle();
-
-            if (taskTitle.equals(currentTaskTitle)) {
-                taskToAssign = task;
-            }
+        if (index.getZeroBased() >= lastShownTaskList.size()) {
+            throw new CommandException(Messages.MESSAGE_INVALID_TASK_DISPLAYED_INDEX);
         }
 
-        if (taskToAssign == null) {
-            throw new CommandException(Messages.MESSAGE_INVALID_TASK_DISPLAYED_TITLE);
-        }
+        Task taskToAssign = lastShownTaskList.get(index.getZeroBased());
 
         for (Person person : lastShownMemberList) {
             Name currentName = person.getName();
@@ -80,11 +72,35 @@ public class AssignTaskCommand extends Command {
             throw new CommandException(Messages.MESSAGE_INVALID_PERSON_DISPLAYED_NAME);
         }
 
-        Title taskTitle = taskToAssign.getTitle();
+        Task assignedTask = createAssignedTask(taskToAssign);
 
-        model.assignTask(taskTitle, memberName);
+        model.setTask(taskToAssign, assignedTask);
         model.updateFilteredTaskList(PREDICATE_SHOW_ALL_TASKS);
         return new CommandResult(String.format(MESSAGE_ASSIGN_TASK_SUCCESS, taskToAssign));
+    }
+
+    private Task createAssignedTask(Task taskToAssign) throws CommandException {
+        assert taskToAssign != null;
+
+        Title title = taskToAssign.getTitle();
+        Description description = taskToAssign.getDescription();
+        Deadline deadline = taskToAssign.getDeadline();
+        TaskStatus taskStatus = taskToAssign.getTaskStatus();
+        Priority priority = taskToAssign.getPriority();
+
+        List<Name> currentAssignees = taskToAssign.getAssignees().assigneesList;
+
+        for (Name currentName : currentAssignees) {
+            if (name.equals(currentName)) {
+                throw new CommandException(MESSAGE_MEMBER_ALREADY_ASSIGNED);
+            }
+        }
+
+        taskToAssign.getAssignees().assigneesList.add(name);
+        Assignees updatedAssignees = taskToAssign.getAssignees();
+
+        return new Task(title, description, deadline, taskStatus, priority, updatedAssignees);
+
     }
 
     @Override
@@ -101,8 +117,8 @@ public class AssignTaskCommand extends Command {
 
         // state check
         AssignTaskCommand e = (AssignTaskCommand) other;
-        System.out.println(taskTitle);
-        System.out.println(e.taskTitle);
-        return taskTitle.equals(e.taskTitle);
+        System.out.println(index);
+        System.out.println(e.index);
+        return index.equals(e.index);
     }
 }

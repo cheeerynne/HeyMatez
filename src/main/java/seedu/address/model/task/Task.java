@@ -1,10 +1,7 @@
 package seedu.address.model.task;
 
-import seedu.address.model.person.Name;
-
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -20,13 +17,13 @@ public class Task {
     private final TaskStatus taskStatus;
     private final Deadline deadline;
     private final Priority priority;
-    private final List<Name> assignees;
+    private final Assignees assignees;
 
     /**
      * Overloaded constructor which sets taskStatus to uncompleted and priority to unassigned by default
      */
-    public Task(Title title, Description description, Deadline deadline, List<Name> assignees) {
-        requireAllNonNull(title, description, deadline);
+    public Task(Title title, Description description, Deadline deadline, Assignees assignees) {
+        requireAllNonNull(title, description, deadline, assignees);
         this.title = title;
         this.description = description;
         this.taskStatus = TaskStatus.UNCOMPLETED;
@@ -39,8 +36,8 @@ public class Task {
      * Every field must be present and not null. Priority here is default to unassigned
      */
     public Task(Title title, Description description, Deadline deadline,
-                TaskStatus taskStatus, List<Name> assignees) {
-        requireAllNonNull(title, description, deadline, taskStatus);
+                TaskStatus taskStatus, Assignees assignees) {
+        requireAllNonNull(title, description, deadline, taskStatus, assignees);
         this.title = title;
         this.description = description;
         this.taskStatus = taskStatus;
@@ -52,8 +49,8 @@ public class Task {
     /**
      * Overloaded constructor where every field must be present and not null.  Status set to default of UNCOMPLETED
      */
-    public Task(Title title, Description description, Deadline deadline, Priority priority, List<Name> assignees) {
-        requireAllNonNull(title, description, deadline, priority);
+    public Task(Title title, Description description, Deadline deadline, Priority priority, Assignees assignees) {
+        requireAllNonNull(title, description, deadline, priority, assignees);
         this.title = title;
         this.description = description;
         this.taskStatus = TaskStatus.UNCOMPLETED;
@@ -66,8 +63,8 @@ public class Task {
      * Overloaded constructor where every field must be present and not null
      */
     public Task(Title title, Description description, Deadline deadline, TaskStatus taskStatus,
-                Priority priority, List<Name> assignees) {
-        requireAllNonNull(title, description, deadline, taskStatus, priority);
+                Priority priority, Assignees assignees) {
+        requireAllNonNull(title, description, deadline, taskStatus, priority, assignees);
         this.title = title;
         this.description = description;
         this.taskStatus = taskStatus;
@@ -96,7 +93,7 @@ public class Task {
         return this.priority;
     }
 
-    public List<Name> getAssignees() {
+    public Assignees getAssignees() {
         return this.assignees;
     }
 
@@ -130,7 +127,8 @@ public class Task {
         Task otherTask = (Task) other;
         return otherTask.getTitle().equals(getTitle())
                 && otherTask.getDescription().equals(getDescription())
-                && otherTask.getDeadline().equals((getDeadline()));
+                && otherTask.getDeadline().equals((getDeadline()))
+                && otherTask.getAssignees().equals((getAssignees()));
     }
 
     @Override

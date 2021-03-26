@@ -17,6 +17,7 @@ public class CliSyntax {
     public static final Prefix PREFIX_STATUS = new Prefix("-s ");
     public static final Prefix PREFIX_DEADLINE = new Prefix("-b ");
     public static final Prefix PREFIX_PRIORITY = new Prefix("-p ");
+//    public static final Prefix PREFIX_ASSIGNEES = new Prefix("-a ");
 
     /* Prefix definitions for assignment */
     public static final Prefix PREFIX_MEMBER_NAME = new Prefix("-n ");

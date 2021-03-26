@@ -6,8 +6,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import seedu.address.model.task.Task;
 
-import seedu.address.model.assignment.Assignment;
-
 /**
  * An UI component that displays information of a {@code Task}.
  */
@@ -46,7 +44,7 @@ public class TaskCard extends UiPart<Region> {
         deadline.setText("Deadline: " + task.getDeadline().dateString);
         taskStatus.setText("Status: " + task.getTaskStatus().getStatus());
         priority.setText("Priorty: " + task.getPriority().getPriority());
-        assignees.setText("Assignees: " + Assignment.getAssignees(task.getTitle()));;
+        assignees.setText("Assignees: " + task.getAssignees().getAssigneesString());
     }
 
     @Override
