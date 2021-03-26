@@ -130,93 +130,49 @@ Classes used by multiple components are in the `seedu.addressbook.commons` packa
 --------------------------------------------------------------------------------------------------------------------
 
 ## **Implementation**
+This section documents some of the noteworthy details on how certain features are implemented
 
-This section describes some noteworthy details on how certain features are implemented.
+### Mark as completed / uncompleted features
 
-### \[Proposed\] Undo/redo feature
+The implementation of the mark as completed and uncompleted features are facilitated by the `DoneTaskCommand` and `
+UndoTaskCommand` classes respectively, both of which extends from the Command abstract class.
 
-#### Proposed Implementation
+It is also facilitated by the following Parser Classes:
+* `DoneTaskCommandParser`
+* `UndoTaskCommandParser`
 
-The proposed undo/redo mechanism is facilitated by `VersionedAddressBook`. It extends `AddressBook` with an undo/redo history, stored internally as an `addressBookStateList` and `currentStatePointer`. Additionally, it implements the following operations:
+The above mentioned Parser classes all inherit the `#parse` method from the Parser interface.
 
-* `VersionedAddressBook#commit()` — Saves the current address book state in its history.
-* `VersionedAddressBook#undo()` — Restores the previous address book state from its history.
-* `VersionedAddressBook#redo()` — Restores a previously undone address book state from its history.
+* `DoneTaskCommandParser#parse` - checks if the arguments passed to the current DoneCommand is valid and creates an DoneTaskCommand instance if it is.
 
-These operations are exposed in the `Model` interface as `Model#commitAddressBook()`, `Model#undoAddressBook()` and `Model#redoAddressBook()` respectively.
+* `UndoTaskCommandParser#parse` - checks if the arguments passed to the current Undo Command is valid and creates an UndoTaskCommand instance if it is.
 
-Given below is an example usage scenario and how the undo/redo mechanism behaves at each step.
+Subsequently, the created `DoneTaskCommand` / `UndoTaskCommand` object contains an `#execute` method which is responsible for
+updating the status of the Task to "completed" or "uncompleted". This is achieved by creating a new `Task` object with the
+same fields and values but updating the `TaskStatus` field according to the input.
 
-Step 1. The user launches the application for the first time. The `VersionedAddressBook` will be initialized with the initial address book state, and the `currentStatePointer` pointing to that single address book state.
+Below is the usage scenario and how the mark the completed mechanism behaves.
 
-![UndoRedoState0](images/UndoRedoState0.png)
+Assumptions:
+1. User has already launched the app
+2. HEY MATEz application has an existing task
 
-Step 2. The user executes `delete 5` command to delete the 5th person in the address book. The `delete` command calls `Model#commitAddressBook()`, causing the modified state of the address book after the `delete 5` command executes to be saved in the `addressBookStateList`, and the `currentStatePointer` is shifted to the newly inserted address book state.
+Step 1. User executes the `done 1` command to mark the 1st task in the task list of HEY MATEz to be completed.  A
+`DoneTaskCommandParser` is created and it calls the `DoneTaskCommandParser#parse` on the arguments
 
-![UndoRedoState1](images/UndoRedoState1.png)
+Step 2. `DoneTaskCommandParser#parse` method will check on the validity of the arguments for a `DoneTaskCommand`. If it
+is valid,  it will call the create a new `DoneTaskCommand` by calling the constructor.
 
-Step 3. The user executes `add n/David …​` to add a new person. The `add` command also calls `Model#commitAddressBook()`, causing another modified address book state to be saved into the `addressBookStateList`.
+Step 4. The `DoneTaskCommand#execute` is then called by the `LogicManger`. The task with the same `Index` is retrieved and
+a copy of the task is created with the same attribute values. However. the `TaskStatus` value is updated to be 'completed'
+in the `Model`.
 
-![UndoRedoState2](images/UndoRedoState2.png)
+Step 5. Once the execution is completed, the message `MESSAGE_DONE_TASK_SUCCESS` is used to return a new Command Result
+with the attached message.
 
-<div markdown="span" class="alert alert-info">:information_source: **Note:** If a command fails its execution, it will not call `Model#commitAddressBook()`, so the address book state will not be saved into the `addressBookStateList`.
+Below is the sequence diagram:
 
-</div>
-
-Step 4. The user now decides that adding the person was a mistake, and decides to undo that action by executing the `undo` command. The `undo` command will call `Model#undoAddressBook()`, which will shift the `currentStatePointer` once to the left, pointing it to the previous address book state, and restores the address book to that state.
-
-![UndoRedoState3](images/UndoRedoState3.png)
-
-<div markdown="span" class="alert alert-info">:information_source: **Note:** If the `currentStatePointer` is at index 0, pointing to the initial AddressBook state, then there are no previous AddressBook states to restore. The `undo` command uses `Model#canUndoAddressBook()` to check if this is the case. If so, it will return an error to the user rather
-than attempting to perform the undo.
-
-</div>
-
-The following sequence diagram shows how the undo operation works:
-
-![UndoSequenceDiagram](images/UndoSequenceDiagram.png)
-
-<div markdown="span" class="alert alert-info">:information_source: **Note:** The lifeline for `UndoCommand` should end at the destroy marker (X) but due to a limitation of PlantUML, the lifeline reaches the end of diagram.
-
-</div>
-
-The `redo` command does the opposite — it calls `Model#redoAddressBook()`, which shifts the `currentStatePointer` once to the right, pointing to the previously undone state, and restores the address book to that state.
-
-<div markdown="span" class="alert alert-info">:information_source: **Note:** If the `currentStatePointer` is at index `addressBookStateList.size() - 1`, pointing to the latest address book state, then there are no undone AddressBook states to restore. The `redo` command uses `Model#canRedoAddressBook()` to check if this is the case. If so, it will return an error to the user rather than attempting to perform the redo.
-
-</div>
-
-Step 5. The user then decides to execute the command `list`. Commands that do not modify the address book, such as `list`, will usually not call `Model#commitAddressBook()`, `Model#undoAddressBook()` or `Model#redoAddressBook()`. Thus, the `addressBookStateList` remains unchanged.
-
-![UndoRedoState4](images/UndoRedoState4.png)
-
-Step 6. The user executes `clear`, which calls `Model#commitAddressBook()`. Since the `currentStatePointer` is not pointing at the end of the `addressBookStateList`, all address book states after the `currentStatePointer` will be purged. Reason: It no longer makes sense to redo the `add n/David …​` command. This is the behavior that most modern desktop applications follow.
-
-![UndoRedoState5](images/UndoRedoState5.png)
-
-The following activity diagram summarizes what happens when a user executes a new command:
-
-![CommitActivityDiagram](images/CommitActivityDiagram.png)
-
-#### Design consideration:
-
-##### Aspect: How undo & redo executes
-
-* **Alternative 1 (current choice):** Saves the entire address book.
-  * Pros: Easy to implement.
-  * Cons: May have performance issues in terms of memory usage.
-
-* **Alternative 2:** Individual command knows how to undo/redo by
-  itself.
-  * Pros: Will use less memory (e.g. for `delete`, just save the person being deleted).
-  * Cons: We must ensure that the implementation of each individual command are correct.
-
-_{more aspects and alternatives to be added}_
-
-### \[Proposed\] Data archiving
-
-_{Explain here how the data archiving feature will be implemented}_
-
+<img src="images/DoneTaskSequenceDiagram.png" width="450" />
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -289,8 +245,8 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 **Extensions**
 
-* 2a. Member already exists (Matching Name) in the list
-    * 2a1. HEY MATEz shows an error message
+* 1a. Member already exists (Matching Name) in the list
+    * 1a1. HEY MATEz shows an error message
 
   Use case ends.
 
@@ -308,17 +264,186 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 **MSS**
 
 1.  User requests to delete a member using the member's name
-2.  HEY MATEz searchs for the member and deletes the member from the list
+2.  HEY MATEz searches for the member 
+3.  HEY MATEz deletes the member from the list
+    
+    Use case ends. 
 
 **Extensions**
 
-* 2a. Member does not exists in the list of members
+* 2a. Member does not exist in the list of members
+    * 2a1. HEY MATEz shows an error message
+
+    Use case ends.
+
+**Use case: Edit member's details**
+
+**MSS**
+
+1.  User requests to edit the details of a member using the member's name
+2.  HEY MATEz searches for the member 
+3.  HEY MATEz edits the corresponding member with the new details 
+    
+    Use case ends. 
+
+**Extensions**
+
+* 2a. Member does not exist in the list of members
     * 2a1. HEY MATEz shows an error message
 
   Use case ends.
 
-### Non-Functional Requirements
+**Use case: Find members using keywords**
 
+**MSS**
+
+1.  User requests to find members using the keywords specified
+2.  HEY MATEz searches through each member's details 
+3.  HEY MATEz lists members whose details matches any of the keywords 
+
+    Use case ends.
+
+**Use case: Add a task**
+
+**MSS**
+
+1.  User requests to add a task
+2.  HEY MATEz adds the task to the task board
+
+    Use case ends.
+
+**Extensions**
+
+* 2a. Task already exists (Matching Title) in the list
+    * 2a1. HEY MATEz shows an error message
+
+  Use case ends.
+
+**Use case: View Tasks**
+
+**MSS**
+
+1.  User requests to view the list of tasks
+2.  HEY MATEz lists the tasks along with the description
+
+    Use case ends.
+
+**Use case: Delete Task**
+
+**MSS**
+
+Similar to deleting a member but user specifies task index instead of name
+
+
+**Extensions**
+
+* 2a. Task index does not exist in the list of tasks
+    * 2a1. HEY MATEz shows an error message
+
+  Use case ends.
+
+**Use case: Edit a task**
+
+**MSS**
+
+Similar tp editing a member except that user specifies task index instead of name
+
+
+**Extensions**
+
+* 1a. Task does not exist (Task index out of bounds)
+    * 1a1. HEY MATEz shows an error message
+
+  Use case ends.
+
+**Use case: Find tasks using keywords**
+
+**MSS**
+
+Similar to finding members with keywords except that HEY MATEz 
+lists tasks with its title or description matching any of the keywords
+
+**Use case: Find tasks with deadline before a specified date**
+
+**MSS**
+
+1. User requests to find tasks with deadline before their specified date
+2. HEY MATEz searches through tasks' deadline 
+3. HEY MATEz lists tasks with deadlines before the specified date
+   
+    Use case ends.
+   
+    
+**Use case: Find tasks using Priority**
+
+**MSS**
+
+1.  User requests to find tasks using the input (A priority value)
+2.  HEY MATEz searches through each tasks' priority
+3.  HEY MATEz lists tasks with a matching priority.
+
+    Use case ends.
+
+Extensions
+* 1a. The input value by the user is not a valid priority value
+    * 1a1. HEY MATEz shows an error message telling the user to choose from a list of predefined values
+* 1b. The input format for findPriority is incorrect
+    * 1b1. HEY MATEz shows an error message
+
+    Use case ends.
+
+**Use case: Mark a Task as Completed**
+
+**MSS**
+
+1.  User requests to mark a task as completed using the task's index
+2.  HEY MATEz searches for the task index and changes the status of the task in the list to be completed
+    
+    Use case ends.
+
+**Extensions**
+* 1a. The index specified by the user does not exist
+    * 1a1. HEY MATEz shows an error message indicating the index is invalid
+
+    Use case ends.
+
+**Use case: Mark a Task as Uncompleted**
+
+**MSS**
+
+1.  User requests to mark a task as uncompleted using the task's index
+2.  HEY MATEz searches for the task index and changes the status of the task in the list to be uncompleted
+
+    Use case ends.
+
+**Extensions**
+* 1a. The index specified by the user does not exist
+    * 1a1. HEY MATEz shows an error message indicating the index is invalid 
+      
+    Use case ends.
+
+**Use case: Delete Task**
+
+**MSS**
+
+Similar to deleting a member except that user specifies task index instead of name
+
+**Extensions**
+* 1a. The index specified by the user does not exist
+    * 1a1. HEY MATEz shows an error message indicating the index is invalid
+
+    Use case ends.
+
+**Use case: View Uncompleted Tasks**
+
+**MSS**
+
+1.  User requests to view the list of uncompleted tasks
+2.  HEY MATEz lists the uncompleted tasks along with the description
+
+    Use case ends.
+
+### Non-Functional Requirements
 1. Should work on any _mainstream OS_ as long as it has Java `11` or above installed.
 2. Data should be persistent after closing and reopening the app
 3. App should be run locally on the user's computer

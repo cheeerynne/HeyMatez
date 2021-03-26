@@ -28,7 +28,10 @@ public class AddTaskCommandParser implements Parser<AddTaskCommand> {
         ArgumentMultimap argMultimap =
                 ArgumentTokenizer.tokenize(args, PREFIX_DESCRIPTION, PREFIX_DEADLINE, PREFIX_STATUS, PREFIX_PRIORITY);
 
-        if (!arePrefixesPresent(argMultimap, PREFIX_DESCRIPTION, PREFIX_DEADLINE)) {
+        try {
+            assert arePrefixesPresent(argMultimap, PREFIX_DESCRIPTION, PREFIX_DEADLINE)
+                    : "You must input a task description and deadline!";
+        } catch (AssertionError e) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddTaskCommand.MESSAGE_USAGE));
         }
 
@@ -36,14 +39,15 @@ public class AddTaskCommandParser implements Parser<AddTaskCommand> {
         try {
             title = ParserUtil.parseTitle(argMultimap.getPreamble());
         } catch (ParseException pe) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddTaskCommand.MESSAGE_USAGE), pe);
+            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, Title.MESSAGE_CONSTRAINTS), pe);
         }
 
         Description description;
         try {
             description = ParserUtil.parseDescription(argMultimap.getValue(PREFIX_DESCRIPTION).get());
         } catch (ParseException pe) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddTaskCommand.MESSAGE_USAGE), pe);
+            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, Description.MESSAGE_CONSTRAINTS),
+                    pe);
         }
 
         Deadline deadline;
@@ -61,7 +65,7 @@ public class AddTaskCommandParser implements Parser<AddTaskCommand> {
             try {
                 status = ParserUtil.parseStatus(argMultimap.getValue(PREFIX_STATUS).get());
             } catch (ParseException pe) {
-                throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddTaskCommand.MESSAGE_USAGE),
+                throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, TaskStatus.MESSAGE_CONSTRAINTS),
                         pe);
             }
 
@@ -74,7 +78,7 @@ public class AddTaskCommandParser implements Parser<AddTaskCommand> {
             try {
                 priority = ParserUtil.parsePriority(argMultimap.getValue(PREFIX_PRIORITY).get());
             } catch (ParseException pe) {
-                throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddTaskCommand.MESSAGE_USAGE),
+                throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, Priority.MESSAGE_CONSTRAINTS),
                         pe);
             }
 
